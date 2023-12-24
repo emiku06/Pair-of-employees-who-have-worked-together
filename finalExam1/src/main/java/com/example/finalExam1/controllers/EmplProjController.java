@@ -8,10 +8,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/addEmployees")
 public class EmplProjController {
+    static ArrayList<EmployeeProject> epAL;
     private EmplProjService emplProjService;
     private CSVService csvService;
 
@@ -22,12 +24,16 @@ public class EmplProjController {
     @PostMapping("/saveFromCSV")
     public void saveFromCSV(@RequestParam("file") MultipartFile file) throws Exception {
         try {
-            ArrayList<EmployeeProject> epAL = csvService.handleFileUpload(file);
+            epAL = csvService.handleFileUpload(file);
             emplProjService.saveInDB(epAL);
 
         }catch (Exception e){
            throw new Exception("it didn't work");
         }
     }
+    @GetMapping("/longest-duration-pairs")
+    public String findLongestDurationPairs() {
 
+        return emplProjService.findLongestDurationPairs(epAL);
+    }
 }
