@@ -4,9 +4,12 @@ import com.example.finalExam1.models.EmployeeProject;
 import com.example.finalExam1.repositories.EmplProjRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class EmplProjService {
@@ -54,7 +57,39 @@ public class EmplProjService {
                 }
             }
         }
+        long longestDuraton = 0;
+        String result = "";
+        for (Map.Entry<Integer, ArrayList<EmployeeProject>> entry : employeePair.entrySet()) {
+            Integer key = entry.getKey();
+            ArrayList<EmployeeProject> value = entry.getValue();
+            LocalDate e1Start = value.get(0).getStartDate();
+            LocalDate e1End = value.get(0).getEndDate();
+            LocalDate e2Start = value.get(1).getStartDate();
+            LocalDate e2End = value.get(1).getEndDate();
 
+            long daysTogether;
+            LocalDate today = LocalDate.now();
+            if (Objects.equals(e1End, today)) {
+                daysTogether = Math.abs(ChronoUnit.DAYS.between(e2Start, e2End));
+            } else if (Objects.equals(e2End, today)) {
+                daysTogether = Math.abs(ChronoUnit.DAYS.between(e1Start, e1End));
+
+            }
+            else if (e1Start.isBefore(e2Start)) {
+                daysTogether = Math.abs(ChronoUnit.DAYS.between(e1End, e2Start));
+            } else {
+                daysTogether = Math.abs(ChronoUnit.DAYS.between(e1Start, e2End));
+            }
+
+            if (daysTogether > longestDuraton) {
+                result = key + ", ";
+                for (EmployeeProject employeeProject : value) {
+                    result += employeeProject.getEmployeeId() + " ";
+                }
+                result += daysTogether;
+            }
+        }
+        return result;
     }
     private static void fillMap(EmployeeProject employeeProject, EmployeeProject employeeProject1, Map<Integer, ArrayList<EmployeeProject>> employeePair) {
         ArrayList<EmployeeProject> employeeProjectsPair = new ArrayList<>();

@@ -33,7 +33,6 @@ public class EmplProjController {
     }
     @GetMapping("/longest-duration-pairs")
     public String findLongestDurationPairs() {
-
         return emplProjService.findLongestDurationPairs(epAL);
     }
 }
